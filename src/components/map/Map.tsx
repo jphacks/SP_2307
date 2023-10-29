@@ -1,11 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, Tooltip } from 'react-leaflet';
 import styles from './Map.module.css';
 //import L from "leaflet";
+import clsx from "clsx";
 
 import { useState } from 'react';
 import { useComments } from '../../hooks/useComments';
 import { geopointToArray } from '../../utils/geopoint';
+import { useFileUpload } from '../../hooks/useFileUpload';
+import { useModal } from '../../hooks/useModal';
+import { Modal } from '../modal/Modal';
 
 export const Map: React.FC = () => {  // 緯度軽度
   const position = [43.062, 141.3543];
@@ -16,7 +20,9 @@ export const Map: React.FC = () => {  // 緯度軽度
   const [content, setContent] = useState<string>("");
   const { comments, addComment, mutate } = useComments();
 
-  const onAddCommentSuccesss = (comment: Comment) => {
+  const { isOpening, toggle } = useModal();
+
+  const onAddCommentSuccesss = () => {
     setSuccessDisplay(true);
     mutate();
   }
@@ -41,6 +47,7 @@ export const Map: React.FC = () => {  // 緯度軽度
             return (
               <Marker position={geopointToArray(msg.position)} key={msg.id} >
                 <Tooltip permanent direction="top">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png" />
                   {msg.content}
                 </Tooltip>
               </Marker>
@@ -60,23 +67,20 @@ export const Map: React.FC = () => {  // 緯度軽度
             ) : null, [successDisplay])}
           {
             useMemo(() => (
-              <div className={styles.sender}>
-                <input className={styles.textbox}
-                  value={content}
-                  onInput={(e) => setContent(e.currentTarget.value)}
-                />
-                <button className={styles.button} onClick={() => {
-                  addComment(content, onAddCommentSuccesss);
-                  setContent("");
-                }}>
-                  <span className="material-symbols-outlined">
-                    send
-                  </span>
-                </button>
-              </div>
-            ), [content])}
-          </div>
+              <button className="btn btn-primary " onClick={() => {toggle(); console.log("toggled", isOpening);}}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                コメント
+              </button>
+            ), [content, isOpening])}
+        </div>
       </div>
+      {
+        isOpening ? (
+          <div className={styles.modal}>
+
+          </div>
+        )
+      }
 
     </div>
   )
