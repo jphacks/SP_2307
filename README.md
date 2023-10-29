@@ -1,6 +1,7 @@
 # ご意見マップ
 
-<img width="414" alt="スクリーンショット 2023-10-29 14 20 03" src="https://github.com/jphacks/SP_2307/assets/96614790/e26bf2fe-38a1-41f2-81bc-ff78bc0c59a1">
+![localhost_5175_(iPhone XR)](https://github.com/jphacks/SP_2307/assets/96614790/f93ce23a-ddd5-42eb-b874-aa017b418f9b)
+
 
 ## 製品概要
 ### 背景(製品開発のきっかけ、課題等）
