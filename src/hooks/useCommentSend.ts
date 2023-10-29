@@ -1,9 +1,9 @@
 import { Comment } from "./useComments";
 import { useGeopoint } from "./useGeopoint";
 
-export const useCommentSend = (onSend?: () => void) => {
+export const useCommentSend = () => {
     const { getLocation } = useGeopoint();
-    const internal = async (partialComment: Pick<Comment, "content" | "position">) => {
+    const internal = (partialComment: Pick<Comment, "content" | "position">) => {
         const url = "https://jphacks2023-ea7a8-default-rtdb.firebaseio.com/data.json";;
         const comment: Comment = {
             ...partialComment,
@@ -12,19 +12,20 @@ export const useCommentSend = (onSend?: () => void) => {
             id: crypto.randomUUID()
         };
         console.log(comment, JSON.stringify(comment));
-        const res = await fetch(url, {
+        fetch(url, {
             method: "post",
             body:JSON.stringify(comment)     
         });
-        await res.json();
+        return comment;
     }
 
-    const send = (content: string) => {
+    const send = (content: string, onSend?: (comment: Comment) => void) => {
         getLocation()
         .then(position => {
             console.log(position.coords);
             const { latitude, longitude } = position.coords;
-            internal({ content, position: { latitude, longitude } })
+            const comment = internal({ content, position: { latitude, longitude } })
+            if (onSend) onSend(comment);
         }).catch(e => console.error(e));
     }
 

@@ -21,7 +21,7 @@ export type Comment = {
 */
 export const useComments = () => {
     const url = "https://jphacks2023-ea7a8-default-rtdb.firebaseio.com/data.json";
-    const { data, error, isLoading } = useSWR<{ [key in string]: Comment}>(url, fetcher);
+    const { data, error, isLoading, mutate } = useSWR<{ [key in string]: Comment}>(url, fetcher);
     let comments: Comment[] = []
     
     if (data) {
@@ -44,10 +44,12 @@ export const useComments = () => {
     }
 
     const { send } = useCommentSend();
+    
     return {
         comments,
         error,
         isLoading,
+        mutate,
         addComment: send
     }
 }
