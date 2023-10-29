@@ -13,7 +13,7 @@ export type Comment = {
     };
     visible: boolean;
     id: string;
-    created_at: string;
+    created_at: number;
 }
 
 /*
