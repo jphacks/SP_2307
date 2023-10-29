@@ -1,13 +1,13 @@
 import { Comment } from "./useComments";
 import { useGeopoint } from "./useGeopoint";
 
-export const useCommentSend = () => {
+export const useCommentSend = (onSend?: () => void) => {
     const { getLocation } = useGeopoint();
     const internal = async (partialComment: Pick<Comment, "content" | "position">) => {
         const url = "https://jphacks2023-ea7a8-default-rtdb.firebaseio.com/data.json";;
         const comment: Comment = {
             ...partialComment,
-            created_at: new Date().toISOString(),
+            created_at: new Date().getTime(),
             visible: true,
             id: crypto.randomUUID()
         };
@@ -24,7 +24,7 @@ export const useCommentSend = () => {
         .then(position => {
             console.log(position.coords);
             const { latitude, longitude } = position.coords;
-            internal({ content, position: { latitude, longitude } });
+            internal({ content, position: { latitude, longitude } })
         }).catch(e => console.error(e));
     }
 
