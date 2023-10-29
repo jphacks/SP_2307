@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo } from 'react';
-import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import React, { useMemo } from 'react';
+import { MapContainer, Marker, Popup, TileLayer, Tooltip } from 'react-leaflet';
 import styles from './Map.module.css';
 //import L from "leaflet";
 
@@ -14,15 +14,16 @@ export const Map: React.FC = () => {  // 緯度軽度
   const [successDisplay, setSuccessDisplay] = useState(false);
 
   const [content, setContent] = useState<string>("");
-  const { comments, addComment } = useComments();
+  const { comments, addComment, mutate } = useComments();
 
-  const onAddCommentSuccesss = () => {
+  const onAddCommentSuccesss = (comment: Comment) => {
     setSuccessDisplay(true);
+    mutate();
   }
 
   if (successDisplay) {
     setTimeout(() => {
-      setSuccessDisplay(false);
+      //setSuccessDisplay(false);
     }, 7000);
   }
 
@@ -38,10 +39,10 @@ export const Map: React.FC = () => {  // 緯度軽度
           useMemo(() => comments.map(msg => {
             if (!msg.position) return null;
             return (
-              <Marker position={geopointToArray(msg.position)} key={msg.id}>
-                <Popup>
+              <Marker position={geopointToArray(msg.position)} key={msg.id} >
+                <Tooltip permanent direction="top">
                   {msg.content}
-                </Popup>
+                </Tooltip>
               </Marker>
             )
           }), [comments])
@@ -65,7 +66,7 @@ export const Map: React.FC = () => {  // 緯度軽度
                   onInput={(e) => setContent(e.currentTarget.value)}
                 />
                 <button className={styles.button} onClick={() => {
-                  addComment(content);
+                  addComment(content, onAddCommentSuccesss);
                   setContent("");
                 }}>
                   <span className="material-symbols-outlined">
