@@ -8,8 +8,14 @@
     left: 0;
 }
 
-.sender {
+.margin {
     margin: 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.sender {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
 }
