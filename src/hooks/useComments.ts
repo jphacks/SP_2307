@@ -2,6 +2,8 @@ import { initializeApp } from 'firebase/app';
 import { getDatabase, Database, ref, set } from "firebase/database";
 import { useEffect, useState } from 'react';
 import { useCommentSend } from './useCommentSend';
+import useSWR from "swr";
+import { fetcher } from '../utils/swr';
 
 export type Comment = {
     content: string;
@@ -18,16 +20,34 @@ export type Comment = {
     コメントの取得機能を提供します.
 */
 export const useComments = () => {
-    const [db, setDB] = useState<Database | null>(null);
-    const getComments = () => {
+    const url = "https://jphacks2023-ea7a8-default-rtdb.firebaseio.com/data.json";
+    const { data, error, isLoading } = useSWR<{ [key in string]: Comment}>(url, fetcher);
+    let comments: Comment[] = []
+    
+    if (data) {
+        /*
+            SWRからデータを受信した際に、comments配列を構成する
+        */
+        const tmp = [];
+        for (const key in data) {
+            tmp.push(data[key]); 
+        }
+        comments = tmp;
+        console.log(comments); 
+    }
 
-    } 
+    if (error) {
+        /*
+            通信エラーの発生時
+        */
+        console.error(error);
+    }
 
-    const comments = getComments();
     const { send } = useCommentSend();
     return {
-        getComments,
         comments,
+        error,
+        isLoading,
         addComment: send
     }
 }
